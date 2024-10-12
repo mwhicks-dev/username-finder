@@ -51,7 +51,6 @@ def bfs() -> None:
         if len(curr) >= minimum_length and available.is_username_available(curr):
             fp.write(f"{curr},{score(curr)}\n")
             fp.flush()
-            time.sleep(60 / requests_per_minute)
 
         for c in characters:
             queue.append(f"{curr}{c}")
