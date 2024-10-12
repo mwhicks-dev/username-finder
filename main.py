@@ -6,6 +6,8 @@ from NumberScoreComponent import NumberScoreComponent
 from TokenScoreComponent import TokenScoreComponent
 
 import re
+import sys
+import time
 
 available: IAvailable = TwitchScrapeAvailable()
 scores: list[IScoreComponent] = [LengthScoreComponent(25), 
@@ -28,18 +30,9 @@ def score(username: str) -> float:
     res = [x.score_username(username) for x in scores]
     return sum(res) / len(res)
 
-fp = open("output.csv", "w")
+requests_per_minute = 30
 
-def dfs(username: str = "") -> None:
-    print(f"-> dfs({username})")
-    if not valid_username(username) or len(username) > maximum_length:
-        return
-    if len(username) >= minimum_length and available.is_username_available(username):
-        fp.write(f"{username},{score(username)}\n")
-        fp.flush()
-    
-    for c in characters:
-        dfs(f"{username}{c}")
+fp = open("output.csv", "w")
 
 def bfs() -> None:
     global characters 
@@ -51,12 +44,14 @@ def bfs() -> None:
         del queue[0]
 
         print(f"-> bfs({curr})")
+        sys.stdout.flush()
 
         if not valid_username(curr) or len(curr) > maximum_length:
             continue
         if len(curr) >= minimum_length and available.is_username_available(curr):
             fp.write(f"{curr},{score(curr)}\n")
             fp.flush()
+            time.sleep(60 / requests_per_minute)
 
         for c in characters:
             queue.append(f"{curr}{c}")

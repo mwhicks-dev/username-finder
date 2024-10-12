@@ -73,7 +73,7 @@ class TokenScoreComponent(IScoreComponent):
             if len(word) > 1:
                 real += 1
                 s2 += len(word)
-        s1 = total / real
+        s1 = total / real if real != 0 else 0
         s2 /= len(name)
         
         return (s1 + s2) / 2
